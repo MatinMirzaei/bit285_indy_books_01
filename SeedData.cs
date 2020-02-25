@@ -5,7 +5,7 @@ using IndyBooks.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IndyBooks
+namespace IndyBooks 
 {
     public static class SeedData
     {
