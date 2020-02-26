@@ -30,17 +30,60 @@ namespace IndyBooks.Controllers
                 //(Note: searchBook is the info from the form)
                 // TODO: order the results by Title
                 foundBooks = foundBooks
-                             .Where(b => b.Title.Contains(search.Title));
+                             .Where(b => b.Title.Contains(search.Title)).OrderBy(b => b.Title);
+
             }
 
             //TODO: Add logic to filter the collection by last part of the Author's Name, if given
             // (HINT: consider the EndsWith() method, also you will need to adjust the View and ViewModel)
-
+            else if (search.Author != null)
+            {
+                foundBooks = foundBooks.Where(book => book.Author.EndsWith(search.Author));
+            }
             //TODO: Filter the collection by price between a low and high value, if given
             //       order results by descending price 
             // (Note: you will need to adjust the ViewModel and View to add search fields)
 
+            else if (search.MinPrice != -1)
+            {
+                foundBooks = foundBooks
+                    .Where(b => b.Price >= search.MinPrice && b.Price <= search.MaxPrice)
+                    .OrderBy(book => book.Price);
+            }
+
             return View("SearchResults", foundBooks);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Book book)
+        {
+
+            CVM cvm = new CVM
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                Edition = book.Edition,
+                Price = book.Price,
+                Year = book.Year,
+            };
+
+            _db.Books.Add(book);
+            _db.SaveChanges();
+
+            return RedirectToAction("Result", cvm);
+        }
+
+        [HttpGet]
+        public IActionResult Result(CVM cb)
+        {
+            return View(cb);
         }
     }
 }
